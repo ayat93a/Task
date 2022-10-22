@@ -1,0 +1,5 @@
+1- get the data from the 3rd party API.
+    ==> Constractor
+2- post all the data to my API and my db
+3- Normalization of the db
+4- get the data from mu db
