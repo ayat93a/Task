@@ -27,6 +27,7 @@ const PORT = 3000
 const pg = require('pg')
 const fs = require('fs');
 const { stringify } = require('querystring');
+const { it } = require('node:test');
 
 // Database is hosted in AWS using elephantsql - Postgresql
 const db = new pg.Client(`postgres://vxyiumuo:Nw3YD08fml28HzDYOg6l3dFPgXvV6dFI@mouse.db.elephantsql.com/vxyiumuo`)
@@ -34,7 +35,6 @@ const db = new pg.Client(`postgres://vxyiumuo:Nw3YD08fml28HzDYOg6l3dFPgXvV6dFI@m
 // middlewares
 app.use(cors());
 app.use(express.json());
-
 
 
 
@@ -46,18 +46,30 @@ app.use(express.json());
 app.get('/' , countriesDetailsHandler);
 
 
+// Get all countries From DB
+app.get(`/all-countrieds-database` , getAllDataHandler)
+
+// search about common name , official name , cca2 , cca3 , ccn3
+app.get('/search' , handelSearch)
+
+// currencies by CCA2
+app.get('/currencies' , handelCurrencies)
+
+
+// Group countries by region , language or both
+app.get('/group' , groupHandler)
+
+// Download 
+app.get('/download-file' , downloadJsonHandler);
+
+
+// Database handler
 // app.post('/all-data' , saveAllDataHandler)
 app.post('/save-third-party-data-normalized' , countriesDetailsSaver );
-app.get('/download-file' , downloadJsonHandler);
 app.post('/countries-Languages' , countriesLanguagesHandler);
 app.post('/Currencies' , countriesCurrenciesHandler);
 
 
-
-// our server
-'Get all countries'
-app.get(`/all-countried=s-database` , getAllDataHandler)
-// app.get('/search' , handelSearch)
 
 
 // constractor 
@@ -220,12 +232,59 @@ function getAllDataHandler(req,res){
 
 
 
+// handel search for offical name , common name , cca2 ,cca3 , ccn3
 function handelSearch (req,res){
-    let userSearch = req.query.userSearch
-    let searchUrl = `http://localhost:3000/?query=${userSearch}`
+    let name = req.query.name
+    let cca2 = req.query.cca2
+    let cca3 = req.query.cca3
+    let ccn3 = req.query.ccn3
+    let searchUrl = `http://localhost:3000/`
     axios.get(searchUrl)
     .then((data) => {
-        console.log('ayat')
+        // console.log(data)
+        let searchResults = data.data.filter((item) => {
+                return item.commonName == name || item.officialName == name || item.cca2 == cca2 || item.cca3 == cca3 || item.ccn3 ==ccn3  
+        })
+        // console.log(searchResults)
+        res.status(200).json(searchResults)
+        
+    }).catch((err)=>{
+        console.log(err)
+    })
+    // console.log(req.query)
+}
+
+// Currencies by cca2
+function handelCurrencies(req,res){
+    let cca2 = req.query.cca2
+
+    let searchUrl = `http://localhost:3000/`
+    axios.get(searchUrl)
+    .then((data)=> {
+        let searchResults = data.data.filter((item) => {
+           
+            return item.cca2 == cca2
+        })
+        // console.log(searchResults)
+        let result = searchResults.map((item)=>{return {'cca2' : item.cca2 , 'name':item.officialName , 
+        'Currencies_name':item.Currencies_name ,'Currencies_symbol': item.Currencies_symbol}})
+        res.status(200).send(result)
+    })
+}
+
+
+// groupHandler
+function groupHandler(req,res){
+    let group = req.query.group
+
+    let searchUrl = `http://localhost:3000/`
+    axios.get(searchUrl)
+    .then((data)=> {
+       let searchResults = data.data.filter((item) => {
+        return item.Region == group || item.Languages == group
+       })
+    // console.log(searchResults)
+    res.status(200).json(searchResults)
     })
 }
 
@@ -236,22 +295,6 @@ function downloadJsonHandler(req,res){
     res.download('./countries.json')
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- 
 
 
 db.connect().then(() => {
