@@ -290,8 +290,6 @@ function groupHandler(req,res){
 
 
 function downloadJsonHandler(req,res){
-    console.log(res.headers)
-   
     res.download('./countries.json')
 }
 
