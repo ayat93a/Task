@@ -4,6 +4,7 @@
 npm install
 nodemon
 ```
+*Database are deployed to AWS , no need to run any command to make it work in your side*
 
 1.  `/` ==> Get all data 
 2.  `/search` ==> search by (common name , official name , cca2 , cca3 , ccn3)
