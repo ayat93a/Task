@@ -34,3 +34,18 @@ nodemon
 ![](./img/currenciea.jpg)
 
 ### *Tables are joined by the id's*
+ ex => 
+ ```
+ select * from retrieved_from_third_party_api 
+    INNER JOIN languages
+    ON retrieved_from_third_party_api.contry_id = languages.lan_id
+    INNER JOIN currencies
+    ON currencies.contry_id = languages.lan_id 
+
+ ```
+
+*Result of the query*
+
+ ![](./img/res1.jpg)
+ ![](./img/res2.jpg)
+ ![](./img/res3.jpg)
