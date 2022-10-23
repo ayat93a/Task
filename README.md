@@ -17,7 +17,7 @@ nodemon
 - `/currencies?cca2={Replace what in the curly bracket with your input}`
 4.  `/group` ==> Group countries => region , language 
 - `/group?group={Replace what the curly bracket with your input}`
-
+5. `/file` to download a json file that contain the response from the origin API
 
 ## DataBase Details 
 *connection details*

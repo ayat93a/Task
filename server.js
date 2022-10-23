@@ -60,7 +60,7 @@ app.get('/currencies' , handelCurrencies)
 app.get('/group' , groupHandler)
 
 // Download 
-app.get('/download-file' , downloadJsonHandler);
+app.get('/file' , downloadJsonHandler);
 
 
 // Database handler
